@@ -9,7 +9,20 @@ app.use(cors());
 
 app.post('/pay', async (req, res) => {
     try {
+        console.log("Datos recibidos en /pay:", req.body);
         const { token } = req.body;
+        
+        if (!token) {
+            console.error("Token no recibido o inválido");
+            return res.status(400).json({ message: "Token no recibido o inválido" });
+        }
+
+        console.log("Enviando a Kushki:", JSON.stringify({
+            token,
+            amount: { subtotalIva: 10, iva: 0, subtotalIva0: 0, ice: 0, currency: "USD" },
+            metadata: {}
+        }, null, 2));
+
         const response = await fetch('https://api-uat.kushkipagos.com/card/v1/charges', {
             method: 'POST',
             headers: {
@@ -22,9 +35,12 @@ app.post('/pay', async (req, res) => {
                 metadata: {}
             })
         });
+
         const result = await response.json();
-        res.json({ message: result.approved ? 'Pago exitoso' : 'Pago declinado' });
+        console.log("Respuesta de Kushki API:", result);
+        res.json({ message: result.approved ? 'Pago exitoso' : `Pago declinado: ${result.message}` });
     } catch (error) {
+        console.error("Error procesando el pago:", error);
         res.status(500).json({ message: 'Error procesando el pago' });
     }
 });
