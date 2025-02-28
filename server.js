@@ -1,37 +1,34 @@
-import express from 'express';
-import cors from 'cors';
-import fetch from 'node-fetch';
-import dotenv from 'dotenv';
-
-dotenv.config(); // Cargar variables de entorno
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/charge', async (req, res) => {
-    const { token, amount } = req.body;
-    
-    try {
-        const response = await fetch('https://api.kushkipagos.com/card/v1/charges', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Private-Merchant-Id': process.env.PRIVATE_MERCHANT_ID, // Usar variable de entorno
-            },
-            body: JSON.stringify({
-                token,
-                amount: { subtotalIva: amount, iva: 0, subtotalIva0: 0, ice: 0, totalAmount: amount },
-                currency: 'USD',
-            }),
-        });
+const KUSHKI_PRIVATE_KEY = process.env.KUSHKI_PRIVATE_KEY;
 
-        const result = await response.json();
-        res.json(result);
+app.post("/charge", async (req, res) => {
+    try {
+        const { token, amount } = req.body;
+        const response = await axios.post(
+            "https://api.kushkipagos.com/card/v1/charges",
+            {
+                token,
+                amount: { subtotalIva: 0, subtotalIva0: amount, iva: 0, ice: 0, currency: "USD" },
+            },
+            {
+                headers: {
+                    "Private-Merchant-Id": KUSHKI_PRIVATE_KEY,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        res.json(response.data);
     } catch (error) {
-        res.status(500).json({ message: 'Error procesando el pago', error });
+        res.status(400).json({ error: error.response?.data || "Error processing payment" });
     }
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
+app.listen(4000, () => console.log("Server running on port 4000"));
