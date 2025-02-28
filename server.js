@@ -13,7 +13,7 @@ app.post('/pay', async (req, res) => {
         const response = await fetch('https://api-uat.kushkipagos.com/card/v1/charges', {
             method: 'POST',
             headers: {
-                'Private-Merchant-Id': process.env.PRIVATE_MERCHANT_ID,
+                'Private-Merchant-Id': process.env.7ffc67b5640948c1842cd33739d281b9, //cambio reciente de id
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
