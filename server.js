@@ -19,7 +19,7 @@ app.post('/pay', async (req, res) => {
 
         console.log("Enviando a Kushki:", JSON.stringify({
             token,
-            amount: { subtotalIva: 10, iva: 0, subtotalIva0: 0, ice: 0, currency: "USD" },
+            amount: { subtotalIva: 16.98, iva: 0, subtotalIva0: 0, ice: 0, currency: "MXN" },
             metadata: {}
         }, null, 2));
 
@@ -31,7 +31,7 @@ app.post('/pay', async (req, res) => {
             },
             body: JSON.stringify({
                 token,
-                amount: { subtotalIva: 10, iva: 0, subtotalIva0: 0, ice: 0, currency: "USD" },
+                amount: { subtotalIva: 16.98, iva: 0, subtotalIva0: 0, ice: 0, currency: "MXN" },
                 metadata: {}
             })
         });
